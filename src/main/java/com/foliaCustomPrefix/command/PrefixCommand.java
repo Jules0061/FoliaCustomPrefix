@@ -48,7 +48,7 @@ public final class PrefixCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, @NotNull String @NotNull [] args) {
         if (args.length == 0) {
-            sender.sendMessage(configManager.message("usage"));
+            configManager.send(sender, "usage");
             return true;
         }
         String sub = args[0].toLowerCase(Locale.ROOT);
@@ -56,7 +56,7 @@ public final class PrefixCommand implements TabExecutor {
             case "reload" -> handleReload(sender);
             case "reset" -> handleResetCommand(sender, args);
             case "set" -> handleSetCommand(sender, args);
-            default -> sender.sendMessage(configManager.message("usage"));
+            default -> configManager.send(sender, "usage");
         }
         return true;
     }
@@ -67,11 +67,11 @@ public final class PrefixCommand implements TabExecutor {
             return;
         }
         if (args.length != 1) {
-            sender.sendMessage(configManager.message("usage"));
+            configManager.send(sender, "usage");
             return;
         }
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(configManager.message("players-only"));
+            configManager.send(sender, "players-only");
             return;
         }
         handleReset(player);
@@ -79,7 +79,7 @@ public final class PrefixCommand implements TabExecutor {
 
     private void handleSetCommand(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(configManager.message("usage"));
+            configManager.send(sender, "usage");
             return;
         }
         if (args.length >= 3 && sender.hasPermission(PERMISSION_SET_OTHERS)) {
@@ -90,7 +90,7 @@ public final class PrefixCommand implements TabExecutor {
             }
         }
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(configManager.message("players-only"));
+            configManager.send(sender, "players-only");
             return;
         }
         handleSet(player, join(args, 1));
@@ -102,16 +102,16 @@ public final class PrefixCommand implements TabExecutor {
 
     private void handleReload(CommandSender sender) {
         if (!sender.hasPermission(PERMISSION_RELOAD)) {
-            sender.sendMessage(configManager.message("no-permission"));
+            configManager.send(sender, "no-permission");
             return;
         }
         configManager.reload();
-        sender.sendMessage(configManager.message("reloaded"));
+        configManager.send(sender, "reloaded");
     }
 
     private void handleReset(Player player) {
         if (!player.hasPermission(PERMISSION_USE)) {
-            player.sendMessage(configManager.message("no-permission"));
+            configManager.send(player, "no-permission");
             return;
         }
         if (checkCooldown(player)) {
@@ -120,12 +120,12 @@ public final class PrefixCommand implements TabExecutor {
         prefixManager.resetPrefix(player.getUniqueId());
         luckPermsHook.clearUserPrefix(player.getUniqueId())
             .thenRun(() -> displayManager.updateDisplay(player));
-        player.sendMessage(configManager.message("removed"));
+        configManager.send(player, "removed");
     }
 
     private void handleResetOther(CommandSender sender, String targetName) {
         if (!sender.hasPermission(PERMISSION_RESET_OTHERS)) {
-            sender.sendMessage(configManager.message("no-permission"));
+            configManager.send(sender, "no-permission");
             return;
         }
         Player online = Bukkit.getPlayerExact(targetName);
@@ -135,7 +135,7 @@ public final class PrefixCommand implements TabExecutor {
         }
         luckPermsHook.lookupUniqueId(targetName).thenAccept(uuid -> {
             if (uuid == null) {
-                sender.sendMessage(configManager.message("player-not-found", "%player%", targetName));
+                configManager.send(sender, "player-not-found", "%player%", targetName);
                 return;
             }
             resetTarget(sender, uuid, targetName, null);
@@ -149,12 +149,12 @@ public final class PrefixCommand implements TabExecutor {
                 displayManager.updateDisplay(online);
             }
         });
-        sender.sendMessage(configManager.message("reset-other", "%player%", name));
+        configManager.send(sender, "reset-other", "%player%", name);
     }
 
     private void handleSet(Player player, String input) {
         if (!player.hasPermission(PERMISSION_USE)) {
-            player.sendMessage(configManager.message("no-permission"));
+            configManager.send(player, "no-permission");
             return;
         }
         if (checkCooldown(player)) {
@@ -165,7 +165,7 @@ public final class PrefixCommand implements TabExecutor {
             return;
         }
         applyPrefix(player, prefix);
-        player.sendMessage(configManager.message("changed"));
+        configManager.send(player, "changed");
     }
 
     private void handleSetOther(CommandSender sender, Player target, String input) {
@@ -174,34 +174,34 @@ public final class PrefixCommand implements TabExecutor {
             return;
         }
         applyPrefix(target, prefix);
-        sender.sendMessage(configManager.message("set-other", "%player%", target.getName()));
+        configManager.send(sender, "set-other", "%player%", target.getName());
     }
 
     private String validate(CommandSender sender, String input) {
         String prefix = input.trim();
         if (prefix.isEmpty()) {
-            sender.sendMessage(configManager.message("empty"));
+            configManager.send(sender, "empty");
             return null;
         }
         if (MiniMessageUtil.containsIllegalCharacters(prefix)) {
-            sender.sendMessage(configManager.message("invalid"));
+            configManager.send(sender, "invalid");
             return null;
         }
         if (!MiniMessageUtil.isValid(prefix)) {
-            sender.sendMessage(configManager.message("invalid"));
+            configManager.send(sender, "invalid");
             return null;
         }
         String plainText = MiniMessageUtil.plainText(prefix);
         if (plainText.isEmpty()) {
-            sender.sendMessage(configManager.message("empty"));
+            configManager.send(sender, "empty");
             return null;
         }
         if (plainText.length() > configManager.getMaxLength()) {
-            sender.sendMessage(configManager.message("too-long"));
+            configManager.send(sender, "too-long");
             return null;
         }
         if (configManager.isBlacklisted(plainText)) {
-            sender.sendMessage(configManager.message("blacklisted"));
+            configManager.send(sender, "blacklisted");
             return null;
         }
         return prefix;
@@ -221,7 +221,7 @@ public final class PrefixCommand implements TabExecutor {
         if (remaining <= 0L) {
             return false;
         }
-        player.sendMessage(configManager.message("cooldown", "%time%", TimeUtil.formatDuration(remaining)));
+        configManager.send(player, "cooldown", "%time%", TimeUtil.formatDuration(remaining));
         return true;
     }
 

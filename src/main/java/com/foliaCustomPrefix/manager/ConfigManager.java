@@ -1,8 +1,7 @@
 package com.foliaCustomPrefix.manager;
 
 import com.foliaCustomPrefix.util.MiniMessageUtil;
-import net.kyori.adventure.text.Component;
-import org.bukkit.configuration.ConfigurationSection;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -17,6 +16,7 @@ public final class ConfigManager {
 
     private final Plugin plugin;
     private final Map<String, String> messages = new ConcurrentHashMap<>();
+    private volatile String messagePrefix = "";
     private volatile long cooldownMillis;
     private volatile int maxLength;
     private volatile boolean debug;
@@ -46,13 +46,12 @@ public final class ConfigManager {
         }
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
         messages.clear();
-        ConfigurationSection section = yaml.getConfigurationSection("messages");
-        if (section == null) {
-            plugin.getLogger().warning("messages.yml is missing the 'messages' section.");
-            return;
-        }
-        for (String key : section.getKeys(false)) {
-            String value = section.getString(key);
+        this.messagePrefix = yaml.getString("prefix", "");
+        for (String key : yaml.getKeys(false)) {
+            if (key.equals("prefix")) {
+                continue;
+            }
+            String value = yaml.getString(key);
             if (value != null) {
                 messages.put(key, value);
             }
@@ -81,12 +80,24 @@ public final class ConfigManager {
         return false;
     }
 
-    public Component message(String key) {
-        return MiniMessageUtil.parse(raw(key));
+    public void send(Audience audience, String key) {
+        String raw = raw(key);
+        if (isSilenced(raw)) {
+            return;
+        }
+        audience.sendMessage(MiniMessageUtil.parse(messagePrefix + raw));
     }
 
-    public Component message(String key, String placeholder, String replacement) {
-        return MiniMessageUtil.parse(raw(key).replace(placeholder, replacement));
+    public void send(Audience audience, String key, String placeholder, String replacement) {
+        String raw = raw(key);
+        if (isSilenced(raw)) {
+            return;
+        }
+        audience.sendMessage(MiniMessageUtil.parse(messagePrefix + raw.replace(placeholder, replacement)));
+    }
+
+    private boolean isSilenced(String raw) {
+        return raw.isBlank() || raw.equalsIgnoreCase("none");
     }
 
     private String raw(String key) {

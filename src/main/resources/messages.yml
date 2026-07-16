@@ -1,15 +1,42 @@
-messages:
-  no-permission: "<red>You don't have permission."
-  changed: "<green>Your prefix has been updated."
-  removed: "<green>Your prefix has been removed."
-  cooldown: "<red>You must wait %time%."
-  invalid: "<red>Invalid MiniMessage format."
-  too-long: "<red>Your prefix is too long."
-  empty: "<red>Your prefix cannot be empty."
-  usage: "<yellow>Usage: /prefix set <prefix> | /prefix reset"
-  reloaded: "<green>Configuration reloaded."
-  players-only: "<red>Only players can use this command."
-  reset-other: "<green>%player%'s prefix has been removed."
-  player-not-found: "<red>Player %player% was not found."
-  blacklisted: "<red>This prefix is not allowed."
-  set-other: "<green>%player%'s prefix has been updated."
+# ============================================================
+#  FoliaCustomPrefix  |  messages.yml
+#
+#  All messages use the Adventure MiniMessage format:
+#  https://docs.advntr.dev/minimessage/format.html
+#
+#  Set any message to "none" (or leave it blank) to silence it.
+#  Available placeholders are listed above each message.
+# ============================================================
+
+# Prepended to every message below. Include a trailing space.
+prefix: "<gradient:#3A8BFF:#1E5FD8><bold>PREFIX</bold></gradient> <dark_gray>»</dark_gray> "
+
+# Sent when the player's own prefix is updated.
+changed: "<green>Your prefix has been updated."
+
+# Sent when the player's own prefix is removed.
+removed: "<green>Your prefix has been removed."
+
+# Sent while the change cooldown is active. Placeholder: %time%
+cooldown: "<red>You must wait %time%."
+
+# Validation feedback.
+invalid: "<red>Invalid MiniMessage format."
+too-long: "<red>Your prefix is too long."
+empty: "<red>Your prefix cannot be empty."
+blacklisted: "<red>This prefix is not allowed."
+
+# Permission / sender feedback.
+no-permission: "<red>You don't have permission."
+players-only: "<red>Only players can use this command."
+
+# Shown on wrong or missing arguments.
+usage: "<yellow>Usage: /prefix set <prefix> | /prefix reset"
+
+# Admin feedback. Placeholder: %player%
+set-other: "<green>%player%'s prefix has been updated."
+reset-other: "<green>%player%'s prefix has been removed."
+player-not-found: "<red>Player %player% was not found."
+
+# Sent after /prefix reload.
+reloaded: "<green>Configuration reloaded."
