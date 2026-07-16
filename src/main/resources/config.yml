@@ -1,0 +1,19 @@
+debug: false
+cooldown-days: 3
+max-length: 20
+
+blacklist:
+  - owner
+  - admin
+  - administrator
+  - mod
+  - moderator
+  - helper
+  - staff
+  - dev
+  - developer
+  - builder
+  - support
+  - manager
+  - founder
+  - op

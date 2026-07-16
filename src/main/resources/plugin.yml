@@ -1,0 +1,30 @@
+name: FoliaCustomPrefix
+version: '${project.version}'
+main: com.foliaCustomPrefix.FoliaCustomPrefix
+api-version: '1.21'
+folia-supported: true
+depend:
+  - LuckPerms
+softdepend:
+  - PlaceholderAPI
+description: Custom Prefix Plugin For CloneDupe
+commands:
+  prefix:
+    description: Set, reset or reload your custom prefix.
+    usage: /prefix <prefix|reset|reload>
+permissions:
+  foliacustomprefix.use:
+    description: Allows setting a custom prefix.
+    default: true
+  foliacustomprefix.bypass:
+    description: Bypasses the prefix change cooldown.
+    default: op
+  foliacustomprefix.reload:
+    description: Allows reloading the plugin configuration.
+    default: op
+  foliacustomprefix.reset.others:
+    description: Allows resetting other players' prefixes.
+    default: op
+  foliacustomprefix.set.others:
+    description: Allows setting other players' prefixes.
+    default: op
